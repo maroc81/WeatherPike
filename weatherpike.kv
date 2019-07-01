@@ -1,0 +1,121 @@
+
+<TimeWidget@Label>:
+    text: "Time"
+    font_size: 20
+
+# current temperature and current conditions
+<TemperatureWidget@BoxLayout>:
+    cur_temp: cur_temp
+    cur_conditions: cur_conditions
+    cur_image: cur_image
+    orientation: "vertical"
+    Label:
+        id: cur_temp
+        text: ""
+        font_size: 35
+    AsyncImage:
+        id: cur_image
+    Label:
+        id: cur_conditions
+        text: ""
+        font_size: 20
+
+<CurrentWeatherWidget@GridLayout>:
+    feels_like: feels_like
+    humidity: humidity
+    pressure: pressure
+    cols: 2
+    rows: 4
+    padding: 0, 10
+    Label:
+        text: "Feels Like:"
+        font_size: 20
+    Label:
+        id: feels_like
+        font_size: 20
+    Label:
+        text: "Humidity:"
+        font_size: 20
+    Label:
+        id: humidity
+        font_size: 20
+    Label:
+        text: "Pressure:"
+        font_size: 20
+    Label:
+        id: pressure
+        font_size: 20
+
+# Widget to hold forecast
+<ForecastWidget@BoxLayout>:
+    title: title
+    img: img
+    temps: temps
+    percent: percent
+    orientation: "vertical"
+    Label:
+        id: title
+        font_size: 20
+        size_hint_y: 0.2
+    AsyncImage:
+        id: img
+        size_hint_y: 0.5
+    Label:
+        id: temps
+        font_size: 15
+        size_hint_y: 0.15
+    Label:
+        id: percent
+        font_size: 15
+        size_hint_y: 0.15
+
+<WeatherPike>:
+    txt_time: txt_time
+    cur_temp: cur_temp
+    cur_weather: cur_weather
+    day1: day1
+    day2: day2
+    day3: day3
+    day4: day4
+
+    # Start of 3 rows
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 0
+        size: root.size
+
+        # Top row with time
+        BoxLayout:
+            orientation: "horizontal"
+            # this row should take up 10% of the screen height
+            size_hint_y: 0.1
+            Label:
+                id: txt_time
+                text: ""
+                font_size: 30
+
+        # Middle row with current conditions
+        BoxLayout:
+            orientation: "horizontal"
+            spacing: 0
+            # this row should take up 30% of the screen height
+            size_hint_y: 0.5
+            TemperatureWidget:
+                id: cur_temp
+            CurrentWeatherWidget:
+                id: cur_weather
+
+        # Bottom row with forecast
+        BoxLayout:
+            orientation: "horizontal"
+            spacing: 0
+            # this row should take up 60% of the screen height
+            size_hint_y: 0.4
+            ForecastWidget:
+                id: day1
+            ForecastWidget:
+                id: day2
+            ForecastWidget:
+                id: day3
+            ForecastWidget:
+                id: day4
