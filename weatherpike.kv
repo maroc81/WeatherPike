@@ -26,7 +26,7 @@
     pressure: pressure
     cols: 2
     rows: 4
-    padding: 0, 10
+    padding: 0, 40
     Label:
         text: "Feels Like:"
         font_size: 20
@@ -73,10 +73,10 @@
     txt_time: txt_time
     cur_temp: cur_temp
     cur_weather: cur_weather
-    day1: day1
-    day2: day2
-    day3: day3
-    day4: day4
+    forecast1: forecast1
+    forecast2: forecast2
+    forecast3: forecast3
+    forecast4: forecast4
 
     # Start of 3 rows
     BoxLayout:
@@ -112,10 +112,11 @@
             # this row should take up 60% of the screen height
             size_hint_y: 0.4
             ForecastWidget:
-                id: day1
+                id: forecast1
             ForecastWidget:
-                id: day2
+                id: forecast2
             ForecastWidget:
-                id: day3
+                id: forecast3
             ForecastWidget:
+                id: forecast4
                 id: day4

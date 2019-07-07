@@ -173,10 +173,10 @@ class WeatherPike(Widget):
     txt_time = ObjectProperty(None)
     cur_temp = ObjectProperty(None)
     cur_weather = ObjectProperty(None)
-    day1 = ObjectProperty(None)
-    day2 = ObjectProperty(None)
-    day3 = ObjectProperty(None)
-    day4 = ObjectProperty(None)
+    forecast1 = ObjectProperty(None)
+    forecast2 = ObjectProperty(None)
+    forecast3 = ObjectProperty(None)
+    forecast4 = ObjectProperty(None)
 
     def updateTime(self, clockDt):
         dt = datetime.now()
@@ -190,10 +190,10 @@ class WeatherPike(Widget):
         provider.update()
         self.cur_temp.update(provider.getCurWeather())
         self.cur_weather.update(provider.getCurWeather())
-        self.day1.update(provider.getForecast(0))
-        self.day2.update(provider.getForecast(1))
-        self.day3.update(provider.getForecast(2))
-        self.day4.update(provider.getForecast(3))
+        self.forecast1.update(provider.getForecast(0))
+        self.forecast2.update(provider.getForecast(1))
+        self.forecast3.update(provider.getForecast(2))
+        self.forecast4.update(provider.getForecast(3))
 
 
 # The App class required by Kivy which will look for
