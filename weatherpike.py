@@ -3,7 +3,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.clock import Clock
 from kivy.config import Config
 
@@ -94,8 +94,13 @@ class DarkSky():
     def populateForecast(self, data):
         wd = WeatherDetails()
         wd.dt = datetime.fromtimestamp(data.time)
-        wd.temp_high = data.temperatureHigh
-        wd.temp_low = data.temperatureLow
+        # daily forecast has high/low
+        # hourly has just temperature
+        if "temperature" in data.__dict__:
+            wd.temp = data.temperature
+        else:
+            wd.temp_high = data.temperatureHigh
+            wd.temp_low = data.temperatureLow
         wd.img_url = self.convertIconDesc(data.icon)
         wd.precip_probability = data.precipProbability * 100
         return wd
@@ -105,12 +110,19 @@ class DarkSky():
             return self.default_weather
         return self.cur_weather
 
-    def getForecast(self, idx):
+    def getDayForecast(self, idx):
         if self.weather is None or len(self.weather.daily.data) <= idx:
             return self.default_weather
         fcast = self.weather.daily.data
         day = self.populateForecast(fcast[idx])
         return day
+
+    def getHourForecast(self, idx):
+        if self.weather is None or len(self.weather.hourly.data) <= idx:
+            return self.default_weather
+        fcast = self.weather.hourly.data
+        hour = self.populateForecast(fcast[idx])
+        return hour
 
     def convertIconDesc(self, desc):
         if desc is None:
@@ -159,12 +171,19 @@ class ForecastWidget(BoxLayout):
     temps = ObjectProperty(None)
     percent = ObjectProperty(None)
 
-    def update(self, details):
+    def updateDay(self, details):
         #self.title.text = details.dt.strftime("%-I %p")
         self.title.text = details.dt.strftime("%A")
         self.img.source = details.img_url
         self.temps.markup = True
         self.temps.text = "%d[sup]o[/sup] / %d[sup]o[/sup]" % (details.temp_low, details.temp_high)
+        self.percent.text = "%d%%" % details.precip_probability
+
+    def updateHour(self, details):
+        self.title.text = details.dt.strftime("%-I %p")
+        self.img.source = details.img_url
+        self.temps.markup = True
+        self.temps.text = "%d[sup]o[/sup]" % (details.temp)
         self.percent.text = "%d%%" % details.precip_probability
 
 
@@ -177,6 +196,7 @@ class WeatherPike(Widget):
     forecast2 = ObjectProperty(None)
     forecast3 = ObjectProperty(None)
     forecast4 = ObjectProperty(None)
+    daily = BooleanProperty(True)
 
     def updateTime(self, clockDt):
         dt = datetime.now()
@@ -190,10 +210,30 @@ class WeatherPike(Widget):
         provider.update()
         self.cur_temp.update(provider.getCurWeather())
         self.cur_weather.update(provider.getCurWeather())
-        self.forecast1.update(provider.getForecast(0))
-        self.forecast2.update(provider.getForecast(1))
-        self.forecast3.update(provider.getForecast(2))
-        self.forecast4.update(provider.getForecast(3))
+        if self.daily:
+            self.updateDaily()
+        else:
+            self.updateHourly()
+
+    def updateDaily(self):
+        self.forecast1.updateDay(provider.getDayForecast(0))
+        self.forecast2.updateDay(provider.getDayForecast(1))
+        self.forecast3.updateDay(provider.getDayForecast(2))
+        self.forecast4.updateDay(provider.getDayForecast(3))
+
+    def updateHourly(self):
+        self.forecast1.updateHour(provider.getHourForecast(0))
+        self.forecast2.updateHour(provider.getHourForecast(1))
+        self.forecast3.updateHour(provider.getHourForecast(2))
+        self.forecast4.updateHour(provider.getHourForecast(3))
+
+    def on_touch_down(self, touch):
+        if self.cur_temp.collide_point(*touch.pos):
+            # current temp widget was touched
+            # switch between hourly and daily
+            self.daily = not self.daily
+            self.updateCurrentConditions(None)
+            return False
 
 
 # The App class required by Kivy which will look for
